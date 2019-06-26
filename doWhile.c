@@ -24,6 +24,7 @@ int main(int argc, char const *argv[]) {
 		printf("Parametros invalidos, tem que passar o valor de repetição\n");
 	} else {
 		resultado = doWhile(atoi(argv[1]));
+		printf("Soma total = %d\n", resultado);
 	}
 
 	printf("Fim do programa\n");

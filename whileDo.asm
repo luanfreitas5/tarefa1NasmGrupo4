@@ -17,15 +17,15 @@
 segment .data
 valor1:	dd 1
 valor2:	dd 2
-mensagem 		db "Simulação while-do somando o valor 3 com a quantidade de vezes", 0xa, 0
+mensagem 		db "Executando o comando while-do", 0xa, 0
 quebraLinha 	db "", 0xa, 0
 
 segment .bss
 soma: resd 1
 
-global whileDo
-
 segment .text
+
+global whileDo
 
 whileDo:
 	enter 0,0 ; cria um frame na pilha

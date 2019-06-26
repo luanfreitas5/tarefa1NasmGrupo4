@@ -4,13 +4,7 @@
 
 %include "asm_io.inc"
 
-; Macro de verificação de fim de interação
-%macro fimFor 0
-	jnz %$inicioLoop  ; verifica se deve continuar iteracoes
-	%$fimLoop: ; se nao, termina a iteracao
-	%pop ; remove da pilha 
-%endmacro
-
+; for
 ; Macro de verificação de inicio de interação
 %macro for 1
 	%push contextoFor ; Cria um contexto no topo da pilha
@@ -19,46 +13,57 @@
 	%$inicioLoop: ; inicia corpo do for
 %endmacro
 
-section .data
-mensagem db "Executando corpo do for (interação)", 0xa, 0
-total db " total de interação", 0xa, 0
+; fimFor
+; Macro de verificação de fim de interação
+%macro fimFor 0
+	jnz %$inicioLoop  ; verifica se deve continuar iteracoes
+	%$fimLoop: ; se nao, termina a iteracao
+	%pop ; remove da pilha 
+%endmacro
 
-global For; declaracao do nome da macro na interface C
+section .data
+mensagem db "Executando o Comando For", 0xa, 0
+
+section .bss
+contador: resd 1
 
 section .text
 
-	For:
+global For; declaracao do nome da macro na interface C
+
+For:
 	enter 0,0 ; cria um frame na pilha
  	pusha ; salva os registradores de base, indice e de segmentos
-
-	mov eax, mensagem 
+	mov eax, mensagem ; imprime mensagem
+	call print_string ; imprime na tela a cada iteracao
+	
 	mov edx,[ebp+8]  ; parametro de iniciação do i
 	mov ebx,[ebp+12] ; Numero de iterações 
 	mov ecx,[ebp+16] ; identificação de 1 para incremento e 0 decremento
 	mov edi, 0; contador de iteracoes
 	cmp edx,ebx       
 
-	for nz 
+	for nz ; chama a macro com parametro de codigo de condição
 		cmp ecx,0 ; compara argumento de passo com 0
-		jz decrementa ; caso o valor for igual a 0 jump decr. Senão continua
-		incrementa: inc edx ; incrementa edx
+validacao:
+		jz decrementa ; caso o valor for igual a 0 jump decrementa --. Senão vai para incrementa ++
+incrementa: 
+		inc edx ; incrementa edx i
 		jmp verifica 
-		decrementa: dec edx ; decrementa edx
+decrementa: 
+		dec edx ; decrementa edx i
 
-		verifica: ; label que verifica situação da condição de parada
-			call print_string ; imprime na tela a cada iteracao
-			inc edi ; incrementa o registrador contador de iteracoes
-			cmp edx,ebx ; condicao de parada
+verifica: ; label que verifica situação da condição de parada
+		inc edi ; incrementa o registrador contador de iteracoes
+		
+		cmp edx,ebx ; condicao de parada
 
-	fimFor
-	
-	mov eax, edi ; imprime o total de iteracoes
-	call print_int  
-	mov eax, total  ; imprime cada iteração
-	call print_string
+fimFor
+	mov [contador], edi
 
 	popa ; restaura os registradores de base, indice e de segmentos
-    mov	eax, 0; move o 0 para registro de retorno
+    mov	eax, [contador]; move o contador para registro de retorno
     leave ; desaloca as variaveis locais
 
 	ret ; retorna ao programa C
+

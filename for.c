@@ -12,14 +12,22 @@
 
 int For(int a, int b, int c);
 
-int main() {
-	int resultado;
+int main(int argc, char const *argv[]) {
+	int resultado = 0;
 
-	printf("Teste de incremento ++: for(int i = 0; i < 10; i++) [10 iteracoes esperadas] \n");
-	resultado = For(0, 10, 1);
-	printf("\n\n");
-	printf("Teste de decremento --: for(int i = 10; i > 5; i--) [5 iteracoes esperadas]\n");
-	resultado = For(10, 5, 0);
+	if (argc != 4 && (atoi(argv[3]) > 1 || atoi(argv[3]) < 0)) {
+		printf("Parametros invalidos, tem que passar o valor de caso\n");
+	} else {
+		printf("Teste de incremento (++) e decremento (--):\n");
+		printf("For i = %s, quantidade = %s e incremento (1) ou decemento (0) %s\n", argv[1], argv[2], argv[3]);
+		resultado = For(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
+		if(atoi(argv[3]) == 1)
+			printf("Total de iterações de incremento (++) %d\n", resultado);
+		else 
+			printf("Total de iterações de decremento (--) %d\n", resultado);
+	}
+		
+	printf("Fim do programa\n");
 
 	return resultado;
 }

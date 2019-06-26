@@ -47,52 +47,51 @@
 segment .data
 
 ; mensagens que serão impressão no qual entrar num caso
-caso1Mensagem 		db "Entrou no Caso 1 valor 50", 0xa, 0
-caso2Mensagem 		db "Entrou no Caso 2 valor 60", 0xa, 0
-caso3Mensagem 		db "Entrou no Caso 3 valor 70", 0xa, 0
-defaultMensagem 	db "Entrou no Default valor invalido", 0xa, 0
 
-testeMensagem 		db "Teste do Switch", 0xa, 0
+mensagem 	db "Executando o comando Switch", 0xa, 0
 
-; valores que determina qual o caso da condição satisfeita
-caso1Valor	equ 50
-caso2Valor	equ 60
-caso3Valor	equ 70
+valor :	dd 2
 
 segment .bss
-
-global Switch
+resultado: resd 1
 
 segment .text
+
+
+global Switch
        
 Switch:
 	enter 0,0 ; cria um frame na pilha
  	pusha ; salva os registradores de base, indice e de segmentos
 
 	;imprimir a mensagem
-	mov eax, testeMensagem
+	mov eax, mensagem
 	call print_string
 	
-	switch [ebp+8]; move o parametro passado no c
-	case caso1Valor
-		mov eax, caso1Mensagem
-		call print_string
+	switch [ebp+20]; move o parametro passado no c
+	case [ebp+8] ; caso 1 
+	    mov	eax,[ebp+8] ; move valor case para eax 
+		add	eax,[ebp+8] ; dobra valor case e atribui no eax
+		add	[resultado],eax	; move o eax para a variavel resultado 
 		break
-	case caso2Valor
-		mov eax, caso2Mensagem
-		call print_string
+	case [ebp+12] ; caso 2
+		mov	eax,[ebp+12] ; move valor case para eax 
+		add	eax,[ebp+12] ; dobra valor case e atribui no eax
+		add	[resultado],eax	; move o eax para a variavel resultado 
 		break
-	case caso3Valor
-		mov eax, caso3Mensagem
-		call print_string
+	case [ebp+16] ; caso 3
+		mov	eax,[ebp+16] ; move valor case para eax 
+		add	eax,[ebp+16] ; dobra valor case e atribui no eax
+		add	[resultado],eax	; move o eax para a variavel resultado 
 		break
-	default
-		mov eax, defaultMensagem
-		call print_string
+	default ; default
+		mov	eax,[ebp+20] ; move valor case para eax 
+		add	eax,[ebp+20] ; dobra valor case e atribui no eax
+		add	[resultado],eax	; move o eax para a variavel resultado 
 		break
 	fimSwitch
 
     popa ; restaura os registradores de base, indice e de segmentos
-	mov eax, 0; move o 0 para registro de retorno
+	mov eax, [resultado]; move o resultado para registro de retorno
 	leave ; desaloca as variaveis locais
     ret
